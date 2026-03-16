@@ -11,7 +11,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 # Do not use this url extensively in testing, less we get marked as a bot.
 # For simple tests, use a random url
 SEARCH_URL = "https://www.amazon.com/s?k=laptops"
-TARGET_COUNT = 5
+TARGET_COUNT = 5  # Number of laptop listings to return
 
 
 def _build_driver() -> webdriver.Chrome:
@@ -84,7 +84,9 @@ def scrape_laptops():
             if not title:
                 continue
 
+            # .a-offscreen is Amazon's visually-hidden span containing the clean price string (e.g. "$499.99")
             price = _extract_text(card, ".a-price .a-offscreen")
+            # .a-icon-alt is the screen-reader text inside the star icon, e.g. "4.5 out of 5 stars"
             rating_el = card.find_elements(By.CSS_SELECTOR, ".a-icon-alt")
             rating = rating_el[0].get_attribute("textContent").strip() if rating_el else None
             url = _extract_url(card)
